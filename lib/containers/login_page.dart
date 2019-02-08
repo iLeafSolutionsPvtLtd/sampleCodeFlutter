@@ -3,28 +3,74 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:redux/redux.dart';
+import 'package:sewer_vewier/actions/login_user_action.dart';
 import 'package:sewer_vewier/containers/app_error.dart';
 import 'package:sewer_vewier/containers/app_loading.dart';
+import 'package:sewer_vewier/containers/email_container.dart';
+import 'package:sewer_vewier/containers/password_container.dart';
+import 'package:sewer_vewier/models/app_state.dart';
+import 'package:sewer_vewier/models/loading_status.dart';
 import 'package:sewer_vewier/models/login_request_model.dart';
-import 'package:sewer_vewier/models/models.dart';
 import 'package:sewer_vewier/presentations/error_page.dart';
-import 'package:sewer_vewier/redux/actions.dart';
+import 'package:sewer_vewier/strings.dart';
 
 class LoginView extends StatefulWidget {
   @override
   _LoginViewState createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginViewState extends State<LoginView>
+    with SingleTickerProviderStateMixin {
+  final TextEditingController _emailController = new TextEditingController();
+  final TextEditingController _passController = new TextEditingController();
+  FocusNode _emailNode = new FocusNode();
+  FocusNode _passNode = new FocusNode();
+
+  AnimationController _controllerAnim;
+  Animation<double> _animation;
+  @override
+  void initState() {
+    super.initState();
+    _controllerAnim = new AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    _animation = new Tween(begin: 200.0, end: 0.0).animate(
+      new CurvedAnimation(
+        parent: _controllerAnim,
+        curve: Curves.ease,
+      ),
+    );
+    _emailNode.addListener(() {
+      setState(() {});
+    });
+    _passNode.addListener(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
+        onInit: (store) {
+          // do token check here
+          _animation.addStatusListener((status) {
+            if (status == AnimationStatus.dismissed ||
+                status == AnimationStatus.completed) {
+              //store.dispatch(new ChangeScreenStateAction(ScreenState.SINGIN));
+            }
+          });
+          _animation.addListener(() {
+            setState(() {});
+          });
+          _controllerAnim.forward();
+        },
         converter: _ViewModel.fromStore,
         builder: (context, vm) {
           return Scaffold(
-            body: AppLoading(builder: (context, loading) {
+            body: AppLoading(builder: (context, loadingStatus) {
+              print('in builder');
+              print(loadingStatus);
               return ModalProgressHUD(
-                inAsyncCall: loading,
+                inAsyncCall: loadingStatus == LoadingStatus.loading,
                 child: SafeArea(
                   child: AppError(
                     builder: (context, isError) => isError
@@ -73,37 +119,51 @@ class _LoginViewState extends State<LoginView> {
                                                 fontSize: 16.2,
                                               ),
                                             ),
-                                            TextField(
-                                              keyboardType:
-                                                  TextInputType.emailAddress,
-                                              style: TextStyle(
-                                                  color:
-                                                      const Color(0x80ffffff),
-                                                  fontWeight: FontWeight.w400,
-                                                  fontFamily: "GoogleSans",
-                                                  fontStyle: FontStyle.normal,
-                                                  fontSize: 13.0),
-                                              decoration: InputDecoration(
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color:
-                                                                  Color.fromRGBO(
-                                                                      222,
-                                                                      222,
-                                                                      222,
-                                                                      1.0))),
-                                                  hintText: 'Email',
-                                                  hintStyle: TextStyle(
-                                                      color: const Color(
-                                                          0x80ffffff),
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      fontFamily: "GoogleSans",
-                                                      fontStyle:
-                                                          FontStyle.normal,
-                                                      fontSize: 13.0)),
-                                            ),
+                                            EmailValidator(builder:
+                                                (context, isEmailValid) {
+                                              print(
+                                                  'email error status in builder');
+                                              print(isEmailValid);
+                                              return TextField(
+                                                onChanged: (text) {
+                                                  vm.validateEmail(text);
+                                                },
+                                                controller: _emailController,
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                style: TextStyle(
+                                                    color:
+                                                        const Color(0x80ffffff),
+                                                    fontWeight: FontWeight.w400,
+                                                    fontFamily: "GoogleSans",
+                                                    fontStyle: FontStyle.normal,
+                                                    fontSize: 13.0),
+                                                decoration: InputDecoration(
+                                                    errorText: isEmailValid
+                                                        ? null
+                                                        : email_error,
+                                                    enabledBorder:
+                                                        UnderlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color:
+                                                                    Color.fromRGBO(
+                                                                        222,
+                                                                        222,
+                                                                        222,
+                                                                        1.0))),
+                                                    hintText: 'Email',
+                                                    hintStyle: TextStyle(
+                                                        color: const Color(
+                                                            0x80ffffff),
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontFamily:
+                                                            "GoogleSans",
+                                                        fontStyle:
+                                                            FontStyle.normal,
+                                                        fontSize: 13.0)),
+                                              );
+                                            }),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                   top: 44),
@@ -118,27 +178,13 @@ class _LoginViewState extends State<LoginView> {
                                                           FontStyle.normal,
                                                       fontSize: 16.2)),
                                             ),
-                                            TextField(
-                                              obscureText: true,
-                                              style: TextStyle(
-                                                  color:
-                                                      const Color(0x80ffffff),
-                                                  fontWeight: FontWeight.w400,
-                                                  fontFamily: "GoogleSans",
-                                                  fontStyle: FontStyle.normal,
-                                                  fontSize: 13.0),
-                                              decoration: InputDecoration(
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color:
-                                                                  Color.fromRGBO(
-                                                                      222,
-                                                                      222,
-                                                                      222,
-                                                                      1.0))),
-                                                  hintText: 'Password',
-                                                  hintStyle: TextStyle(
+                                            PasswordValidator(
+                                              builder:
+                                                  (context, isPasswordValid) {
+                                                return TextField(
+                                                  controller: _passController,
+                                                  obscureText: true,
+                                                  style: TextStyle(
                                                       color: const Color(
                                                           0x80ffffff),
                                                       fontWeight:
@@ -146,7 +192,33 @@ class _LoginViewState extends State<LoginView> {
                                                       fontFamily: "GoogleSans",
                                                       fontStyle:
                                                           FontStyle.normal,
-                                                      fontSize: 13.0)),
+                                                      fontSize: 13.0),
+                                                  decoration: InputDecoration(
+                                                      errorText: isPasswordValid
+                                                          ? null
+                                                          : "Invalid password.",
+                                                      enabledBorder:
+                                                          UnderlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                  color:
+                                                                      Color.fromRGBO(
+                                                                          222,
+                                                                          222,
+                                                                          222,
+                                                                          1.0))),
+                                                      hintText: 'Password',
+                                                      hintStyle: TextStyle(
+                                                          color: const Color(
+                                                              0x80ffffff),
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontFamily:
+                                                              "GoogleSans",
+                                                          fontStyle:
+                                                              FontStyle.normal,
+                                                          fontSize: 13.0)),
+                                                );
+                                              },
                                             ),
                                             Padding(
                                               padding:
@@ -175,8 +247,8 @@ class _LoginViewState extends State<LoginView> {
                                                               fontSize: 11.3)),
                                                       onPressed: () {
                                                         print('pressed');
-                                                        vm.updateLoadingStatus(
-                                                            vm.isLoading);
+                                                        //  vm.updateLoadingStatus(
+                                                        // loading);
                                                       })
                                                 ],
                                               ),
@@ -193,8 +265,12 @@ class _LoginViewState extends State<LoginView> {
                                                     onPressed: () {
                                                       vm.getUserDetails(
                                                           LoginRequest(
-                                                              password: "",
-                                                              email: ""));
+                                                              password:
+                                                                  _passController
+                                                                      .text,
+                                                              email:
+                                                                  _emailController
+                                                                      .text));
                                                     },
                                                     shape:
                                                         RoundedRectangleBorder(
@@ -235,32 +311,24 @@ class _LoginViewState extends State<LoginView> {
 }
 
 class _ViewModel {
-  final bool isLoading;
-  final bool isError;
+  final emailErrorMessage;
   final Function(LoginRequest) getUserDetails;
-  final Function(bool) updateLoadingStatus;
-  final Function(bool) updateErrorStatus;
-
-  _ViewModel({
-    @required this.isLoading,
-    @required this.isError,
-    this.getUserDetails,
-    @required this.updateLoadingStatus,
-    @required this.updateErrorStatus,
-  });
+  final Function(String) validateEmail;
+  final Function(String) validatePassword;
+  _ViewModel(
+      {this.getUserDetails,
+      this.validateEmail,
+      this.validatePassword,
+      this.emailErrorMessage});
 
   static _ViewModel fromStore(Store<AppState> store) {
     return _ViewModel(
-        isLoading: store.state.isLoading,
-        isError: store.state.isError,
-        updateLoadingStatus: (status) {
-          store.dispatch(UpdateLoadingStatus(!status));
-        },
-        updateErrorStatus: (status) {
-          store.dispatch(UpdateErrorStatus(!status));
-        },
         getUserDetails: (request) {
           store.dispatch(LoginUserAction(request));
-        });
+        },
+        validateEmail: (email) {
+          store.dispatch(ValidateEmailAction(email));
+        },
+        emailErrorMessage: store.state.authState.passwordErrorMessage);
   }
 }

@@ -4,17 +4,15 @@ import 'package:redux/redux.dart';
 import 'package:sewer_vewier/models/app_state.dart';
 import 'package:sewer_vewier/selectors/selectors.dart';
 
-class AppError extends StatelessWidget {
-  final Function(BuildContext context, bool isError) builder;
+class EmailValidator extends StatelessWidget {
+  final Function(BuildContext context, bool isEmailValid) builder;
 
-  const AppError({Key key, @required this.builder}) : super(key: key);
+  const EmailValidator({Key key, this.builder}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return StoreConnector<AppState, bool>(
-      distinct: true,
-      converter: (Store<AppState> store) => isErrorSelector(store.state),
-      builder: builder,
-    );
+        converter: (Store<AppState> store) => isEmailValid(store.state),
+        builder: builder);
   }
 }
