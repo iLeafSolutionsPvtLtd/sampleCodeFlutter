@@ -70,6 +70,8 @@ class _LoginViewState extends State<LoginView>
               print('in builder');
               print(loadingStatus);
               return ModalProgressHUD(
+                color: Colors.black26,
+                opacity: 1.0,
                 inAsyncCall: loadingStatus == LoadingStatus.loading,
                 child: SafeArea(
                   child: AppError(
@@ -85,7 +87,6 @@ class _LoginViewState extends State<LoginView>
                                   child: Stack(
                                     children: <Widget>[
                                       Container(
-                                          color: Colors.green,
                                           height: MediaQuery.of(context)
                                               .size
                                               .height,
@@ -94,6 +95,12 @@ class _LoginViewState extends State<LoginView>
                                           child: Image(
                                             image: AssetImage('assets/bg.png'),
                                             fit: BoxFit.cover,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
                                           )),
                                       Padding(
                                         padding: const EdgeInsets.all(19.0),
@@ -181,7 +188,11 @@ class _LoginViewState extends State<LoginView>
                                             PasswordValidator(
                                               builder:
                                                   (context, isPasswordValid) {
+                                                print('in builder password');
+                                                print(isPasswordValid);
                                                 return TextField(
+                                                  onChanged: (text) =>
+                                                      vm.validatePassword(text),
                                                   controller: _passController,
                                                   obscureText: true,
                                                   style: TextStyle(
@@ -196,7 +207,7 @@ class _LoginViewState extends State<LoginView>
                                                   decoration: InputDecoration(
                                                       errorText: isPasswordValid
                                                           ? null
-                                                          : "Invalid password.",
+                                                          : password_error,
                                                       enabledBorder:
                                                           UnderlineInputBorder(
                                                               borderSide: BorderSide(
@@ -328,6 +339,9 @@ class _ViewModel {
         },
         validateEmail: (email) {
           store.dispatch(ValidateEmailAction(email));
+        },
+        validatePassword: (password) {
+          store.dispatch(ValidatePasswordAction(password));
         },
         emailErrorMessage: store.state.authState.passwordErrorMessage);
   }

@@ -54,8 +54,10 @@ class EmailErrorAction {
 }
 
 class PasswordErrorAction {
+  final bool status;
   final String message;
-  PasswordErrorAction(this.message);
+
+  PasswordErrorAction(this.message, this.status);
 }
 
 class RetypePasswordErrorAction {
@@ -93,4 +95,4 @@ class CheckTokenAction {
 
 class ClearErrorsAction {}
 
-class NavigateToRegistrationAction {}
+class NavigateToHomeAction {}
