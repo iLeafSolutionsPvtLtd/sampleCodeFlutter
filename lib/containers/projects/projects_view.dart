@@ -13,23 +13,20 @@ class ProjectView extends StatefulWidget {
 }
 
 class _ProjectViewState extends State<ProjectView> {
-  Widget topView() =>
-      Container(
+  Widget topView() => Container(
         height: 50,
         color: SVColors.sv_main_violet,
       );
 
-  Widget title() =>
-      new Text("Projects",
-          style: const TextStyle(
-              color: const Color(0xffffffff),
-              fontWeight: FontWeight.w600,
-              fontFamily: "OpenSans",
-              fontStyle: FontStyle.normal,
-              fontSize: 15.0));
+  Widget title() => new Text("Projects",
+      style: const TextStyle(
+          color: const Color(0xffffffff),
+          fontWeight: FontWeight.w600,
+          fontFamily: "OpenSans",
+          fontStyle: FontStyle.normal,
+          fontSize: 15.0));
 
-  Widget searchView(BuildContext context) =>
-      Container(
+  Widget searchView(BuildContext context) => Container(
         height: 60,
         child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -102,14 +99,14 @@ class _ProjectViewState extends State<ProjectView> {
         ),
         SliverList(
             delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                return ProjectListItem(
-                  progress: 0.9,
-                  title: "March_2018_North_Allerdale_Fastpass",
-                );
-              },
-              childCount: 50,
-            ))
+          (context, index) {
+            return ProjectListItem(
+              progress: 0.9,
+              title: "March_2018_North_Allerdale_Fastpass",
+            );
+          },
+          childCount: 50,
+        ))
       ],
     );
   }

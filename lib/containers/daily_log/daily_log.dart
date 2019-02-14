@@ -74,8 +74,7 @@ class _DailyLogViewState extends State<DailyLogView> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
-      builder: (context, vm) =>
-          CustomScrollView(
+      builder: (context, vm) => CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
                 backgroundColor: SVColors.sv_main_violet,
@@ -107,18 +106,18 @@ class _DailyLogViewState extends State<DailyLogView> {
               ),
               SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                      return TaskListItem(
-                        title: "January 7 22323",
-                        id1: "454546564",
-                        id2: 'ssdaa45455',
-                        id3: 'a1554554',
-                        id4: '55888787',
-                        isCompleted: true,
-                      );
-                    },
-                    childCount: 20,
-                  ))
+                (context, index) {
+                  return TaskListItem(
+                    title: "January 7 22323",
+                    id1: "454546564",
+                    id2: 'ssdaa45455',
+                    id3: 'a1554554',
+                    id4: '55888787',
+                    isCompleted: true,
+                  );
+                },
+                childCount: 20,
+              ))
             ],
           ),
     );
