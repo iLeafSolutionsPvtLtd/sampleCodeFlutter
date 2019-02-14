@@ -32,14 +32,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-//        appBar: AppBar(
-//          title: title(),
-//          elevation: 0.0,
-//          backgroundColor: SVColors.sv_main_violet,
-//          actions: <Widget>[
-//            IconButton(icon: Icon(Icons.add), onPressed: () {})
-//          ],
-//        ),
         body: PageStorage(
             bucket: bucket, child: currentPage(index: currentIndex)),
         bottomNavigationBar: BottomNavigationBar(
@@ -48,18 +40,26 @@ class _HomePageState extends State<HomePage> {
           type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.store),
+              icon: ImageIcon(
+                AssetImage('assets/home1.png'),
+              ),
+              activeIcon: ImageIcon(AssetImage('assets/home.png')),
               title: Text("Daily Log"),
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.store),
+                icon: ImageIcon(AssetImage('assets/project1.png')),
+                activeIcon: ImageIcon(AssetImage('assets/project.png')),
                 title: Text(
                   "Projects",
                 )),
             BottomNavigationBarItem(
-                icon: Icon(Icons.store), title: Text("Queue")),
+                icon: ImageIcon(AssetImage('assets/queue1.png')),
+                activeIcon: ImageIcon(AssetImage('assets/queue.png')),
+                title: Text("Queue")),
             BottomNavigationBarItem(
-                icon: Icon(Icons.store), title: Text("Logout"))
+                icon: ImageIcon(AssetImage('assets/logout1.png')),
+                activeIcon: ImageIcon(AssetImage('assets/logout.png')),
+                title: Text("Logout"))
           ],
           onTap: (index) {
             setState(() {

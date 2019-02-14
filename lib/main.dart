@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:sewer_vewier/containers/details_page/details_page.dart';
 import 'package:sewer_vewier/containers/home_page/home_page.dart';
 import 'package:sewer_vewier/containers/login_page.dart';
 import 'package:sewer_vewier/middlewares/app_middleware.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
             routes: <String, WidgetBuilder>{
               "/signin": (BuildContext context) => new LoginView(),
               "/home": (BuildContext context) => new HomePage(),
+              "/details": (BuildContext context) => DetailsView(),
             }));
   }
 }

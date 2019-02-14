@@ -1,5 +1,6 @@
 import 'package:redux/redux.dart';
 import 'package:sewer_vewier/actions/login_user_action.dart';
+import 'package:sewer_vewier/actions/navigation_actions.dart';
 import 'package:sewer_vewier/api/login_api.dart';
 import 'package:sewer_vewier/models/app_state.dart';
 import 'package:sewer_vewier/models/loading_status.dart';
@@ -63,6 +64,8 @@ Middleware<AppState> _navigatorMiddleware(AppState state) {
   return (Store store, action, NextDispatcher next) {
     if (action is NavigateToHomeAction) {
       Keys.navKey.currentState.pushReplacementNamed("/home");
+    } else if (action is NavigateToDetailsPage) {
+      Keys.navKey.currentState.pushReplacementNamed("/details");
     }
   };
 }
