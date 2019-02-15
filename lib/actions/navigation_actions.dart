@@ -1,1 +1,1 @@
-class NavigateToDetailsPage {}
+class NavigateToDetailsPageAction {}

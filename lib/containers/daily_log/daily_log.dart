@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:sewer_vewier/actions/navigation_actions.dart';
 import 'package:sewer_vewier/containers/daily_log/daily_log_item.dart';
 import 'package:sewer_vewier/models/app_state.dart';
 import 'package:sewer_vewier/sv_colors.dart';
@@ -21,6 +23,7 @@ class _DailyLogViewState extends State<DailyLogView> {
       );
 
   Widget title() => new Text("Projects",
+      textAlign: TextAlign.center,
       style: const TextStyle(
           color: const Color(0xffffffff),
           fontWeight: FontWeight.w600,
@@ -29,9 +32,9 @@ class _DailyLogViewState extends State<DailyLogView> {
           fontSize: 15.0));
 
   Widget searchView(BuildContext context) => Container(
-        height: 60,
+    height: 70,
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           child: Container(
             height: 38,
             decoration: BoxDecoration(
@@ -74,54 +77,88 @@ class _DailyLogViewState extends State<DailyLogView> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
+      converter: _ViewModel.fromStore,
       builder: (context, vm) => CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                backgroundColor: SVColors.sv_main_violet,
-                title: title(),
-                pinned: true,
-                floating: true,
-                bottom: PreferredSize(
-                    child: searchView(context), preferredSize: Size(95.5, 60)),
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  if (index == 0) {
-                    return Container(
-                      height: 60.0,
-                      color: SVColors.sv_main_violet,
-                      transform: Matrix4.translationValues(0, -10, 0),
-                    );
-                  } else {
-                    return TaskListItem(
-                      title: "February 2 22323",
-                      id1: "454546564",
-                      id2: 'ssdaa45455',
-                      id3: 'a1554554',
-                      id4: '55888787',
-                      isCompleted: true,
-                    );
-                  }
-                }, childCount: 2),
-              ),
-              SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return TaskListItem(
-                    title: "January 7 22323",
-                    id1: "454546564",
-                    id2: 'ssdaa45455',
-                    id3: 'a1554554',
-                    id4: '55888787',
-                    isCompleted: true,
+        slivers: <Widget>[
+          SliverAppBar(
+            centerTitle: true,
+            backgroundColor: SVColors.sv_main_violet,
+            title: title(),
+            actions: <Widget>[
+              Icon(Icons.add),
+              Container(
+                width: 20,
+              )
+            ],
+            pinned: true,
+            floating: true,
+            bottom: PreferredSize(
+                child: searchView(context), preferredSize: Size(95.5, 70)),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return Stack(
+                children: <Widget>[
+                  Container(
+                    height: 60.0,
+                    color: SVColors.sv_main_violet,
+                    transform: Matrix4.translationValues(0, -10, 0),
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        transform: Matrix4.translationValues(0, 0, 0),
+                        child: TaskListItem(
+                          title: "February 2 22323",
+                          id1: "454546564",
+                          id2: 'ssdaa45455',
+                          id3: 'a1554554',
+                          id4: '55888787',
+                          isCompleted: true,
+                        ),
+                        width: double.infinity,
+                      ),
+                    ],
+                  )
+                ],
+              );
+            }, childCount: 1),
+          ),
+          SliverList(
+              delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                  return Column(
+                    children: <Widget>[
+                      TaskListItem(
+                        title: "January 7 22323",
+                        id1: "454546564",
+                        id2: 'ssdaa45455',
+                        id3: 'a1554554',
+                        id4: '55888787',
+                        isCompleted: true,
+                        viewmodel: vm,
+                      ),
+                    ],
                   );
                 },
                 childCount: 20,
               ))
-            ],
-          ),
+        ],
+      ),
     );
   }
 }
 
-class _ViewModel {}
+class _ViewModel {
+  final Function navigationToDetailsPageAction;
+
+  _ViewModel({this.navigationToDetailsPageAction});
+
+  static _ViewModel fromStore(Store<AppState> store) {
+    return _ViewModel(
+      navigationToDetailsPageAction: () {
+        store.dispatch(NavigateToDetailsPageAction());
+      },
+    );
+  }
+}

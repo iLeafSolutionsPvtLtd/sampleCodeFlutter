@@ -16,6 +16,8 @@ List<Middleware<AppState>> appMiddleware([AppState state]) {
     TypedMiddleware<AppState, ValidateEmailAction>(validationMiddleware),
     TypedMiddleware<AppState, ValidatePasswordAction>(validationMiddleware),
     TypedMiddleware<AppState, NavigateToHomeAction>(navigationMiddleware),
+    TypedMiddleware<AppState, NavigateToDetailsPageAction>(
+        navigationMiddleware),
   ];
 }
 
@@ -64,7 +66,7 @@ Middleware<AppState> _navigatorMiddleware(AppState state) {
   return (Store store, action, NextDispatcher next) {
     if (action is NavigateToHomeAction) {
       Keys.navKey.currentState.pushReplacementNamed("/home");
-    } else if (action is NavigateToDetailsPage) {
+    } else if (action is NavigateToDetailsPageAction) {
       Keys.navKey.currentState.pushReplacementNamed("/details");
     }
   };
